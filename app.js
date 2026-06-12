@@ -3,13 +3,32 @@
    纯前端 + localStorage，数据不上传
    ============================================================ */
 
+/* ---------- 入场动画（轻量，GPU 友好）---------- */
+function playReveal(scope) {
+  const root = scope || document;
+  const items = root.querySelectorAll('.reveal:not(.in)');
+  items.forEach((el, i) => {
+    setTimeout(() => el.classList.add('in'), 80 + i * 90);
+  });
+}
+function observeReveal() {
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+}
+
 /* ---------- 路由 ---------- */
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0, 0);
 }
-function goHome() { showPage('page-home'); }
+function goHome() { showPage('page-home'); playReveal(document.getElementById('page-home')); }
 function goEntry(el) {
   const target = el.getAttribute('data-go');
   showPage(target);
@@ -17,6 +36,13 @@ function goEntry(el) {
   if (target === 'page-vault') renderVault();
   if (target === 'page-battle') renderBattle();
 }
+// 键盘可达性：入口卡片支持回车/空格
+document.addEventListener('keydown', (e) => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('entry-card')) {
+    e.preventDefault(); goEntry(e.target);
+  }
+});
+window.addEventListener('DOMContentLoaded', () => { observeReveal(); playReveal(document.getElementById('page-home')); });
 
 /* ============================================================
    模块一：裁员风险自测
@@ -76,7 +102,7 @@ function renderQuestion() {
   document.getElementById('progressFill').style.width = (qIndex / total * 100) + '%';
   document.getElementById('progressText').textContent = `第 ${qIndex + 1} / ${total} 题`;
 
-  let html = `<div class="question">
+  let html = `<div class="question reveal">
     <div class="q-dim">${DIMENSIONS[q.dim].name}</div>
     <div class="q-title">${q.title}</div>
     <div class="options">`;
@@ -86,9 +112,11 @@ function renderQuestion() {
   });
   html += `</div></div>`;
   document.getElementById('questionContainer').innerHTML = html;
+  requestAnimationFrame(() => { const c = document.querySelector('#questionContainer .reveal'); if (c) c.classList.add('in'); });
 
   document.getElementById('nextBtn').disabled = qAnswers[qIndex] === null;
-  document.getElementById('nextBtn').textContent = (qIndex === total - 1) ? '查看结果' : '下一题';
+  const isLast = qIndex === total - 1;
+  document.getElementById('nextBtn').innerHTML = (isLast ? '查看结果' : '下一题') + '<span class="ico">→</span>';
   document.getElementById('prevBtn').style.display = qIndex === 0 ? 'none' : 'block';
 }
 
@@ -170,11 +198,15 @@ function showQuizResult() {
   for (const k in DIMENSIONS) {
     const v = Math.round(dimNorm[k]);
     dimHtml += `<div class="dim-row">
-      <div class="dim-head"><span>${DIMENSIONS[k].name}（权重${Math.round(DIMENSIONS[k].weight*100)}%）</span><span>${v}</span></div>
-      <div class="dim-track"><div class="dim-fill" style="width:${v}%;background:${dimColors[k]};"></div></div>
+      <div class="dim-head"><span>${DIMENSIONS[k].name}（权重${Math.round(DIMENSIONS[k].weight*100)}%）</span><span class="dv">${v}</span></div>
+      <div class="dim-track"><div class="dim-fill" data-w="${v}" style="width:0;background:${dimColors[k]};"></div></div>
     </div>`;
   }
   document.getElementById('dimBreakdown').innerHTML = dimHtml;
+  // 下一帧触发宽度过渡动画
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.querySelectorAll('#dimBreakdown .dim-fill').forEach(el => { el.style.width = el.getAttribute('data-w') + '%'; });
+  }));
 
   const sb = document.getElementById('signalsBox');
   if (triggered.length) {
@@ -187,7 +219,7 @@ function showQuizResult() {
 
   document.getElementById('ctaBox').innerHTML =
     `<h3>${ctaTitle}</h3><p>${ctaDesc}</p>
-     <button class="btn btn-sm" onclick="showPage('${ctaGo}'); renderVault();">${ctaBtn}</button>`;
+     <button class="btn btn-sm" onclick="showPage('${ctaGo}'); renderVault();">${ctaBtn.replace(' →','')}<span class="ico">→</span></button>`;
 }
 
 function restartQuiz() { initQuiz(); }
