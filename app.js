@@ -130,21 +130,21 @@ function showQuizResult() {
 
   let light, color, title, desc, ctaTitle, ctaDesc, ctaBtn, ctaGo;
   if (final <= 39) {
-    light = '🟢 绿灯 · 风险较低'; color = '#2ecc71';
+    light = '🟢 绿灯 · 风险较低'; color = '#28A745';
     title = '目前信号平稳';
     desc = '你当前的裁员风险较低，属于正常波动。但职场无常，建议先把基础证据存好，做到有备无患。';
     ctaTitle = '花 5 分钟，存好你的“保险箱”';
     ctaDesc = '劳动合同、工资流水这些，在职时好拿，离职后往往就拿不到了。现在存好，以防万一。';
     ctaBtn = '去存证据 →'; ctaGo = 'page-vault';
   } else if (final <= 69) {
-    light = '🟡 黄灯 · 风险升高'; color = '#f1c40f';
+    light = '🟡 黄灯 · 风险升高'; color = '#FF9F0A';
     title = '出现了一些值得警惕的信号';
     desc = '你的处境出现了若干风险信号，现在正是最佳备战时机——趁还在职，把筹码攒满。别慌，你完全来得及准备。';
     ctaTitle = '现在是备战的黄金窗口';
     ctaDesc = '建议立即开始证据预存，把谈判筹码攒满。趁还在职，把该留的都留好。';
     ctaBtn = '立即开始备战 →'; ctaGo = 'page-vault';
   } else {
-    light = '🔴 红灯 · 高风险'; color = '#ff6b6b';
+    light = '🔴 红灯 · 高风险'; color = '#D70015';
     title = '多个高风险信号同时出现';
     desc = '你的情况触发了多个高危信号。别慌——现在行动起来，准备越充分，真到谈判桌上越有底气。你能做的事还有很多。';
     ctaTitle = '马上行动，别等约谈才准备';
@@ -165,7 +165,7 @@ function showQuizResult() {
   document.getElementById('resultTitle').textContent = title;
   document.getElementById('resultDesc').textContent = desc;
 
-  const dimColors = { A:'#ff6b6b', B:'#ff9f43', C:'#5b8cff', D:'#a78bfa' };
+  const dimColors = { A:'#D70015', B:'#FF9F0A', C:'#0071E3', D:'#6E6E73' };
   let dimHtml = `<h3>风险来源拆解</h3>`;
   for (const k in DIMENSIONS) {
     const v = Math.round(dimNorm[k]);
