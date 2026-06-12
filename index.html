@@ -3,168 +3,205 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-<meta name="theme-color" content="#FAF7F2" />
-<title>职场降落伞 · 裁员可能性热测</title>
+<meta name="theme-color" content="#FBFAF7" />
+<meta name="description" content="职场降落伞：9 个问题测出裁员风险信号，并给出证据准备和 HR 约谈应急建议。" />
+<title>职场降落伞 · 裁员风险体检</title>
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div class="app">
+<a class="skip-link" href="#main">跳到主要内容</a>
+<main id="main" class="app">
 
   <section id="page-home" class="page active">
-    <div class="h5-hero">
-      <div class="hero-visual" aria-hidden="true">
-        <div class="poster-sample">
-          <span class="poster-tab">我的结果</span>
-          <strong>64</strong>
-          <small>黄灯</small>
+    <section class="report-hero" aria-labelledby="home-title">
+      <div class="brand-row">
+        <span class="brand-mark">职场降落伞</span>
+        <span class="privacy-chip">本机保存</span>
+      </div>
+
+      <div class="hero-report-card" aria-label="体检报告样例">
+        <div class="report-card-head">
+          <span>裁员风险体检</span>
+          <small>样例报告</small>
         </div>
-        <svg class="hero-chute" viewBox="0 0 120 140" role="img" aria-label="降落伞图形">
-          <path d="M14 48C19 20 42 8 60 8s41 12 46 40c-12-5-21-5-28 2-6-8-13-8-18 0-5-8-12-8-18 0-7-7-16-7-28-2Z" fill="currentColor"/>
-          <path d="M24 50l29 52M96 50l-29 52M42 51l14 51M78 51l-14 51" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".45"/>
-          <circle cx="60" cy="109" r="8" fill="currentColor"/>
-          <rect x="52" y="118" width="16" height="16" rx="7" fill="currentColor"/>
-        </svg>
+        <div class="report-card-score">
+          <strong>64</strong>
+          <span>黄灯</span>
+        </div>
+        <p>绩效还稳，但公司风向已经变了。</p>
+        <div class="mini-bars" aria-hidden="true">
+          <span style="--w:68%"></span>
+          <span style="--w:44%"></span>
+          <span style="--w:78%"></span>
+        </div>
       </div>
 
-      <p class="hero-kicker">职场热测</p>
-      <p class="hero-scenario">如果明天 HR 找你谈话</p>
-      <h1>你的职场降落伞打开了吗？</h1>
-      <p class="hero-copy">测出裁员风险、处境标签和现在最该做的 3 件事。</p>
-      <div class="hero-trust">
-        <span>不上传数据</span>
-        <span>只给你自己看</span>
-        <span>可生成结果卡</span>
+      <p class="hero-label">裁员风险体检</p>
+      <h1 id="home-title">先测风险，再准备证据</h1>
+      <p class="hero-copy">9 个问题，看清公司信号、个人处境和现在最该做的事。</p>
+
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="startQuiz()">开始体检</button>
+        <button class="text-action" onclick="openEmergency()">已经被约谈？先看应急</button>
       </div>
-      <button class="btn btn-primary" onclick="startQuiz()">开始 2 分钟自测</button>
-      <button class="link-button" onclick="openEmergency()">已经被约谈？直接看应对</button>
+
+      <div class="trust-line">
+        <span>不登录</span>
+        <span>不上传</span>
+        <span>结果只存在本机</span>
+      </div>
       <p id="homeStateHint" class="home-state">测完会生成一张适合截图分享的结果卡。</p>
-    </div>
-
-    <section class="feed-card result-teaser">
-      <div>
-        <span class="note-label">朋友测出来的类型</span>
-        <h2>绩效安全，但公司危险型</h2>
-        <p>不是制造焦虑，是提醒自己别空手上谈判桌。</p>
-      </div>
-      <div class="teaser-score">
-        <strong>64</strong>
-        <span>黄灯</span>
-      </div>
     </section>
 
-    <section class="tool-bridge">
-      <h2>测完不是结束，真正有用的是准备</h2>
-      <div class="bridge-grid">
-        <button class="mini-card" onclick="startQuiz()">
+    <section class="below-fold">
+      <h2>你会得到什么</h2>
+      <div class="benefit-list">
+        <button class="benefit-row" onclick="startQuiz()">
           <span>01</span>
-          <strong>裁员可能性自测</strong>
-          <small>先判断现在是不是备战窗口</small>
+          <div>
+            <strong>一份风险体检报告</strong>
+            <small>不是吓你，是把公司信号和个人处境拆开看。</small>
+          </div>
         </button>
-        <button class="mini-card" onclick="openVault()">
+        <button class="benefit-row" onclick="openVault()">
           <span>02</span>
-          <strong>我的降落伞清单</strong>
-          <small>合同、流水、绩效沟通先存好</small>
+          <div>
+            <strong>先做哪 3 件事</strong>
+            <small>合同、流水、绩效沟通先存好，别空手上谈判桌。</small>
+          </div>
         </button>
-        <button class="mini-card urgent" onclick="openEmergency()">
+        <button class="benefit-row is-urgent" onclick="openEmergency()">
           <span>03</span>
-          <strong>被约谈了，先别签</strong>
-          <small>按步骤稳住，别当场交底牌</small>
+          <div>
+            <strong>被约谈时怎么稳住</strong>
+            <small>先别签，先拿书面方案，再算清补偿区间。</small>
+          </div>
         </button>
       </div>
     </section>
   </section>
 
   <section id="page-quiz" class="page">
-    <div class="topbar">
+    <header class="topbar">
       <button class="back-btn" onclick="goHome()" aria-label="返回首页">返回</button>
-      <span class="topbar-title">裁员可能性自测</span>
-    </div>
+      <span class="topbar-title">裁员风险体检</span>
+    </header>
 
-    <div id="quiz-running">
-      <div class="progress-bar">
+    <div id="quiz-running" class="quiz-shell">
+      <div class="quiz-progress">
+        <div>
+          <span id="progressText">第 1 / 9 题</span>
+          <strong>按真实情况选就好</strong>
+        </div>
         <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
-        <div id="progressText" class="progress-text">第 1 / 9 题</div>
       </div>
       <div id="questionContainer"></div>
-      <div class="quiz-actions">
-        <button id="prevBtn" class="btn btn-secondary" onclick="prevQuestion()">上一题</button>
+      <div class="sticky-actions">
+        <button id="prevBtn" class="text-action muted" onclick="prevQuestion()">上一题</button>
         <button id="nextBtn" class="btn btn-primary" onclick="nextQuestion()" disabled>下一题</button>
       </div>
     </div>
 
     <div id="quiz-result" class="hidden">
-      <article class="result-note">
-        <p id="resultKicker" class="note-label">我的结果</p>
-        <div class="result-scoreline">
-          <strong id="resultScore">0</strong>
-          <span id="resultLight">黄灯</span>
+      <article class="result-report">
+        <div class="report-section-head">
+          <span id="resultKicker">你的风险体检报告</span>
+          <small>仅供你自己参考</small>
         </div>
-        <h2 id="resultPersona"></h2>
-        <p id="resultDesc"></p>
-        <div id="resultSignals" class="signal-list"></div>
+        <div class="result-summary">
+          <div class="result-score">
+            <strong id="resultScore">0</strong>
+            <span id="resultLight">黄灯</span>
+          </div>
+          <div>
+            <h2 id="resultPersona"></h2>
+            <p id="resultDesc"></p>
+          </div>
+        </div>
+
+        <section class="report-block">
+          <h3>关键信号</h3>
+          <div id="resultSignals" class="signal-list"></div>
+        </section>
+
+        <section class="report-block">
+          <h3>现在先做这 3 件事</h3>
+          <div id="priorityActions" class="priority-actions"></div>
+        </section>
+
         <div id="dimBreakdown" class="dim-breakdown"></div>
+
         <div class="result-actions">
-          <button class="btn btn-primary" onclick="scrollToPoster()">生成我的结果卡</button>
+          <button class="btn btn-primary" onclick="scrollToPoster()">生成分享卡</button>
           <button class="btn btn-secondary" onclick="openVaultFromResult()">开始存证据</button>
         </div>
       </article>
 
       <article id="sharePoster" class="share-poster">
-        <p class="poster-kicker">职场降落伞测试</p>
-        <h2 id="posterPersona">绩效安全，但公司危险型</h2>
-        <div class="poster-score">
-          <span id="posterLight">黄灯</span>
-          <strong id="posterScore">64</strong>
+        <div class="poster-topline">
+          <span>职场降落伞测试</span>
+          <small id="posterLight">黄灯</small>
         </div>
-        <p id="posterLine">现在是最佳备战窗口。</p>
+        <h2 id="posterHeadline">我是黄灯打工人</h2>
+        <p id="posterPersona">绩效安全，但公司危险型</p>
+        <div class="poster-score">
+          <strong id="posterScore">64</strong>
+          <span id="posterLine">绩效还稳，但公司风向变了</span>
+        </div>
         <div class="poster-footer">
-          <span>职场降落伞</span>
+          <span>不是制造焦虑，是提醒自己别空手上谈判桌</span>
           <span class="qr-box">链接</span>
         </div>
       </article>
-      <button class="btn btn-primary" onclick="copyShareText()">复制分享文案</button>
-      <button class="btn btn-secondary" onclick="savePosterGuide()">怎么保存结果卡</button>
-      <button class="link-button subtle" onclick="restartQuiz()">重新测一次</button>
+
+      <div class="share-actions">
+        <button class="btn btn-primary" onclick="copyShareText()">复制分享文案</button>
+        <button class="btn btn-secondary" onclick="savePosterGuide()">怎么保存结果卡</button>
+        <button class="text-action muted" onclick="restartQuiz()">重新测一次</button>
+      </div>
       <p id="shareStatus" class="share-status" aria-live="polite"></p>
     </div>
   </section>
 
   <section id="page-vault" class="page">
-    <div class="topbar">
+    <header class="topbar">
       <button class="back-btn" onclick="goHome()" aria-label="返回首页">返回</button>
-      <span class="topbar-title">我的降落伞清单</span>
-    </div>
+      <span class="topbar-title">证据行动清单</span>
+    </header>
 
-    <div class="vault-head">
-      <div class="vault-ring">
-        <svg width="126" height="126" viewBox="0 0 126 126">
-          <circle cx="63" cy="63" r="52" fill="none" stroke="rgba(29,29,31,.1)" stroke-width="11"/>
-          <circle id="vaultArc" cx="63" cy="63" r="52" fill="none" stroke="#FF2442" stroke-width="11"
-                  stroke-linecap="round" transform="rotate(-90 63 63)"
-                  stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
-          <text id="vaultPct" x="63" y="70" text-anchor="middle">0%</text>
+    <section class="vault-head">
+      <div class="vault-meter">
+        <svg width="96" height="96" viewBox="0 0 96 96">
+          <circle cx="48" cy="48" r="38" fill="none" stroke="rgba(29,29,31,.08)" stroke-width="9"/>
+          <circle id="vaultArc" cx="48" cy="48" r="38" fill="none" stroke="#FF2442" stroke-width="9"
+                  stroke-linecap="round" transform="rotate(-90 48 48)"
+                  stroke-dasharray="238.8" stroke-dashoffset="238.8"/>
+          <text id="vaultPct" x="48" y="54" text-anchor="middle">0%</text>
         </svg>
       </div>
-      <h2>先把谈判筹码收好</h2>
-      <p id="vaultTip" class="vault-tip">先存最关键的三样：劳动合同、工资流水、绩效和沟通记录。</p>
-    </div>
+      <div>
+        <p class="section-label">优先行动</p>
+        <h2>先存这 3 项</h2>
+        <p id="vaultTip" class="vault-tip">这些最影响补偿基数和谈判筹码。</p>
+      </div>
+    </section>
 
     <div id="vaultList" class="vault-list"></div>
     <p class="privacy-note">你的清单和备注只保存在这台设备上，不上传、不联网。</p>
   </section>
 
   <section id="page-battle" class="page">
-    <div class="topbar">
+    <header class="topbar">
       <button class="back-btn" onclick="goHome()" aria-label="返回首页">返回</button>
       <span class="topbar-title">被约谈了，先别签</span>
-    </div>
+    </header>
     <div id="battleContainer"></div>
   </section>
 
   <footer class="disclaimer">
     本工具提供参考信息，不构成法律意见。重大决策请咨询专业律师。所有数据仅存于本机，不上传。
   </footer>
-</div>
+</main>
 
 <script src="app.js"></script>
 </body>
