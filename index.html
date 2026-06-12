@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#0f1115" />
+<title>裁员大礼包 · 赔偿谈判助手</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="app">
+
+  <!-- ========== 首页 ========== -->
+  <section id="page-home" class="page active">
+    <div class="home-hero">
+      <span class="brand-badge">裁员大礼包</span>
+      <h1 class="home-title">你的裁员保险箱</h1>
+      <p class="home-sub">平时帮你攒筹码、估风险、稳心态；<br/>真被裁那天，帮你把赔偿谈到最高。</p>
+    </div>
+
+    <div class="entry-list">
+      <div class="entry-card" data-go="page-quiz" onclick="goEntry(this)">
+        <div class="entry-icon">🧭</div>
+        <div class="entry-text">
+          <h3>我有点慌，先测测风险</h3>
+          <p>2 分钟，测出你当前的裁员风险</p>
+        </div>
+        <span class="entry-arrow">→</span>
+      </div>
+
+      <div class="entry-card" data-go="page-vault" onclick="goEntry(this)">
+        <div class="entry-icon">🗄️</div>
+        <div class="entry-text">
+          <h3>趁还在职，攒好筹码</h3>
+          <p>证据保险箱：现在存好，真出事不慌</p>
+        </div>
+        <span class="entry-arrow">→</span>
+      </div>
+
+      <div class="entry-card urgent" data-go="page-battle" onclick="goEntry(this)">
+        <div class="entry-icon">⚡</div>
+        <div class="entry-text">
+          <h3>我被裁了，现在怎么办</h3>
+          <p>一步步教你，把赔偿谈到最高</p>
+        </div>
+        <span class="entry-arrow">→</span>
+      </div>
+    </div>
+
+    <p class="privacy-note">🔒 你的所有数据只存在这台设备上，不上传、不联网。公司看不到，我们也看不到。</p>
+  </section>
+
+  <!-- ========== 风险自测 ========== -->
+  <section id="page-quiz" class="page">
+    <div class="topbar">
+      <button class="back-btn" onclick="goHome()">‹ 返回</button>
+      <span class="topbar-title">裁员风险自测</span>
+    </div>
+
+    <!-- 答题中 -->
+    <div id="quiz-running">
+      <div class="progress-bar">
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-text" id="progressText"></div>
+      </div>
+      <div id="questionContainer"></div>
+      <button class="btn" id="nextBtn" onclick="nextQuestion()" disabled>下一题</button>
+      <button class="btn btn-ghost" id="prevBtn" onclick="prevQuestion()">上一题</button>
+    </div>
+
+    <!-- 结果页 -->
+    <div id="quiz-result" class="hidden">
+      <div class="result">
+        <div class="gauge">
+          <svg width="200" height="200" viewBox="0 0 220 220">
+            <circle cx="110" cy="110" r="95" fill="none" stroke="#2c313c" stroke-width="16"/>
+            <circle id="gaugeArc" cx="110" cy="110" r="95" fill="none" stroke-width="16"
+                    stroke-linecap="round" transform="rotate(-90 110 110)"
+                    stroke-dasharray="596.9" stroke-dashoffset="596.9"/>
+            <text id="gaugeScore" x="110" y="105" text-anchor="middle" class="score-num" fill="#e8eaed">0</text>
+            <text x="110" y="140" text-anchor="middle" font-size="14" fill="#9aa0aa">风险分</text>
+          </svg>
+        </div>
+        <div id="lightLabel" class="score-label"></div>
+
+        <div class="result-card">
+          <h3 id="resultTitle"></h3>
+          <p id="resultDesc"></p>
+          <div class="signals" id="signalsBox"></div>
+        </div>
+
+        <div class="dim-breakdown" id="dimBreakdown"></div>
+
+        <div class="cta" id="ctaBox"></div>
+
+        <button class="btn btn-ghost" onclick="restartQuiz()">重新测一次</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 证据保险箱 ========== -->
+  <section id="page-vault" class="page">
+    <div class="topbar">
+      <button class="back-btn" onclick="goHome()">‹ 返回</button>
+      <span class="topbar-title">证据保险箱</span>
+    </div>
+
+    <div class="vault-head">
+      <div class="vault-ring">
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#2c313c" stroke-width="10"/>
+          <circle id="vaultArc" cx="60" cy="60" r="50" fill="none" stroke="#5b8cff" stroke-width="10"
+                  stroke-linecap="round" transform="rotate(-90 60 60)"
+                  stroke-dasharray="314.2" stroke-dashoffset="314.2"/>
+          <text id="vaultPct" x="60" y="66" text-anchor="middle" font-size="22" font-weight="700" fill="#e8eaed">0%</text>
+        </svg>
+      </div>
+      <p id="vaultTip" class="vault-tip">趁还在职，把这些证据存好。离职后很多东西就拿不到了。</p>
+    </div>
+
+    <div id="vaultList" class="vault-list"></div>
+
+    <p class="privacy-note">🔒 这些记录只存在你的设备上，不上传任何服务器。</p>
+  </section>
+
+  <!-- ========== 实战谈判指引 ========== -->
+  <section id="page-battle" class="page">
+    <div class="topbar">
+      <button class="back-btn" onclick="goHome()">‹ 返回</button>
+      <span class="topbar-title">实战谈判指引</span>
+    </div>
+    <div id="battleContainer"></div>
+  </section>
+
+  <!-- 全局免责 -->
+  <footer class="disclaimer">
+    本工具提供参考信息，不构成法律意见。重大决策请咨询专业律师。<br/>所有数据仅存于本机，不上传。
+  </footer>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
