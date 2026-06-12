@@ -77,6 +77,10 @@ body {
 /* hero 极细底部高光 */
 .home-hero::after { content: ""; position: absolute; left: 12%; right: 12%; bottom: 0; height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent); }
+/* 降落伞图形与轻微飘动 */
+.hero-chute { margin: 0 auto 14px; width: 100px; height: 100px; filter: drop-shadow(0 10px 22px rgba(0,0,0,0.35)); animation: floatChute 4.5s var(--ease-soft) infinite; }
+@keyframes floatChute { 0%,100% { transform: translateY(0) rotate(-1.5deg);} 50% { transform: translateY(-7px) rotate(1.5deg);} }
+@media (prefers-reduced-motion: reduce) { .hero-chute { animation: none; } }
 .brand-badge {
   display: inline-block; font-size: 10px; color: var(--silver); letter-spacing: 0.24em; font-weight: 500;
   text-transform: uppercase;
