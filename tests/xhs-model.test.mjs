@@ -86,8 +86,8 @@ test('share result only exposes three featured signals', () => {
 
 test('h5 quiz stays lightweight', () => {
   const app = loadApp();
-  assert.ok(app.QUESTIONS.length >= 8);
-  assert.ok(app.QUESTIONS.length <= 9);
+  assert.equal(app.QUESTIONS.length, 5);
+  assert.deepEqual(new Set(app.QUESTIONS.map(question => question.dim)), new Set(['A', 'B', 'C', 'D']));
 });
 
 test('compensation helper rounds years according to labor compensation rules', () => {
