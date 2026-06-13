@@ -77,6 +77,9 @@ test('yellow result uses the approved shareable persona', () => {
   assert.equal(profile.persona, '绩效安全，但公司危险型');
   assert.match(app.getShareCopy(profile), /黄灯/);
   assert.match(app.getShareCopy(profile), /降落伞/);
+  assert.match(app.getShareCopy(profile), /不暴露具体答案/);
+  assert.match(app.getShareCopy(profile), /红黄绿灯/);
+  assert.match(app.getShareCopy(profile), /你也测一下/);
 });
 
 test('share result only exposes three featured signals', () => {

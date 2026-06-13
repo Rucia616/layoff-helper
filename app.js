@@ -127,8 +127,8 @@ function getEvidenceSummary(triggered = [], situation = getSituation('check')) {
   };
 }
 
-function getShareCopy(profile) {
-  return `我测出来是${profile.light}：${profile.shareLine} 这不是算命，是根据裁员前常见事件信号做自查。测测你的职场降落伞打开了吗？`;
+function getShareCopy(profile, shareUrl = 'https://rucia616.github.io/layoff-helper/') {
+  return `我在职场降落伞测出来是${profile.light}：${profile.shareLine} 不暴露具体答案。你也测一下自己的职场红黄绿灯，看看该不该先存证据：${shareUrl}`;
 }
 
 function getVaultPriorityIds() {
@@ -227,7 +227,7 @@ function updateHomeState() {
   } else if (lastResult) {
     hint.textContent = `上次报告：${lastResult.profile.light}。建议先补齐最关键的 3 项证据。`;
   } else {
-    hint.textContent = '测完会生成一张适合截图分享的结果卡。';
+    hint.textContent = '测完生成一张不暴露具体答案的红黄绿灯卡，可以发给朋友互测。';
   }
 }
 
@@ -406,7 +406,7 @@ function showQuizResult() {
   renderPriorityActions();
   renderDimensionBreakdown(dimNorm);
   renderPoster(final, profile);
-  document.getElementById('shareStatus').textContent = '结果卡已生成。它不会展示你的具体答案。';
+  document.getElementById('shareStatus').textContent = '互测卡已生成。它不会展示你的具体答案，适合发给朋友一起自查。';
 }
 
 function renderEvidenceBasis(basis) {
@@ -476,10 +476,11 @@ function renderPoster(final, profile) {
 
 function copyShareText() {
   const status = document.getElementById('shareStatus');
-  const text = lastResult ? getShareCopy(lastResult.profile) : '测测你的职场降落伞打开了吗？';
+  const shareUrl = window.location ? window.location.origin + window.location.pathname : undefined;
+  const text = lastResult ? getShareCopy(lastResult.profile, shareUrl) : `测一下你的职场红黄绿灯，看看该不该先存证据：${shareUrl || 'https://rucia616.github.io/layoff-helper/'}`;
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).then(() => {
-      if (status) status.textContent = '分享文案已复制，可以发给朋友或贴到小红书。';
+      if (status) status.textContent = '互测文案已复制。它不包含你的具体答案，可以发给朋友一起测。';
     }).catch(() => {
       if (status) status.textContent = text;
     });
@@ -490,7 +491,7 @@ function copyShareText() {
 
 function savePosterGuide() {
   const status = document.getElementById('shareStatus');
-  if (status) status.textContent = '截图保存上方结果卡。结果卡不会展示你的具体答案。';
+  if (status) status.textContent = '截图保存上方互测卡。它不会展示你的具体答案，适合发小红书、朋友圈或朋友群。';
 }
 
 function restartQuiz() {

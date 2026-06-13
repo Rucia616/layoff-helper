@@ -50,7 +50,7 @@
         <span>不上传</span>
         <span>结果只存在本机</span>
       </div>
-      <p id="homeStateHint" class="home-state">测完会生成一张适合截图分享的结果卡。</p>
+      <p id="homeStateHint" class="home-state">测完生成一张不暴露具体答案的红黄绿灯卡，可以发给朋友互测。</p>
     </section>
 
     <section class="below-fold">
@@ -138,14 +138,14 @@
         <div id="dimBreakdown" class="dim-breakdown"></div>
 
         <div class="result-actions">
-          <button class="btn btn-primary" onclick="scrollToPoster()">生成分享卡</button>
+          <button class="btn btn-primary" onclick="scrollToPoster()">生成互测卡</button>
           <button class="btn btn-secondary" onclick="openVaultFromResult()">开始存证据</button>
         </div>
       </article>
 
       <article id="sharePoster" class="share-poster">
         <div class="poster-topline">
-          <span>职场降落伞测试</span>
+          <span>职场红黄绿灯测试</span>
           <small id="posterLight">黄灯</small>
         </div>
         <h2 id="posterHeadline">我是黄灯打工人</h2>
@@ -155,14 +155,14 @@
           <span id="posterLine">绩效还稳，但公司风向变了</span>
         </div>
         <div class="poster-footer">
-          <span>不是制造焦虑，是提醒自己别空手上谈判桌</span>
-          <span class="qr-box">链接</span>
+          <span>不展示具体答案，适合发给朋友互测</span>
+          <span class="qr-box">互测</span>
         </div>
       </article>
 
       <div class="share-actions">
-        <button class="btn btn-primary" onclick="copyShareText()">复制分享文案</button>
-        <button class="btn btn-secondary" onclick="savePosterGuide()">怎么保存结果卡</button>
+        <button class="btn btn-primary" onclick="copyShareText()">复制互测文案</button>
+        <button class="btn btn-secondary" onclick="savePosterGuide()">保存互测卡</button>
         <button class="text-action muted" onclick="restartQuiz()">重新测一次</button>
       </div>
       <p id="shareStatus" class="share-status" aria-live="polite"></p>
