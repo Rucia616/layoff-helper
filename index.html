@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 <meta name="theme-color" content="#FBFAF7" />
-<meta name="description" content="职场降落伞：5 个核心问题测出裁员风险信号，并给出证据准备和 HR 约谈应急建议。" />
+<meta name="description" content="职场降落伞：先选处境，再用 5 个事件信号识别裁员风险，并给出证据准备和 HR 约谈应急建议。" />
 <title>职场降落伞 · 裁员风险体检</title>
 <link rel="stylesheet" href="style.css" />
 </head>
@@ -38,7 +38,7 @@
 
       <p class="hero-label">裁员风险体检</p>
       <h1 id="home-title">先测风险，再准备证据</h1>
-      <p class="hero-copy">5 个核心问题，30 秒看清公司信号、个人处境和现在最该做的事。</p>
+      <p class="hero-copy">先选你的处境，再用 5 个事件信号看清现在最该做的事。</p>
 
       <div class="hero-actions">
         <button class="btn btn-primary" onclick="startQuiz()">开始体检</button>
@@ -90,8 +90,8 @@
     <div id="quiz-running" class="quiz-shell">
       <div class="quiz-progress">
         <div>
-          <span id="progressText">第 1 / 5 题</span>
-          <strong>按真实情况选就好</strong>
+          <span id="progressText">先选处境</span>
+          <strong>只选已经发生的事</strong>
         </div>
         <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
       </div>
@@ -118,6 +118,12 @@
             <p id="resultDesc"></p>
           </div>
         </div>
+
+        <section class="report-block">
+          <h3>为什么这样判断</h3>
+          <div id="resultBasis" class="basis-grid"></div>
+          <p class="method-note">这不是预测裁员概率，而是识别裁员前常见的可验证事件信号。</p>
+        </section>
 
         <section class="report-block">
           <h3>关键信号</h3>

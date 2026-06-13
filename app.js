@@ -7,23 +7,30 @@ const RESULT_KEY = 'layoff_last_result_v2';
 const VAULT_KEY = 'layoff_vault_v1';
 
 const DIMENSIONS = {
-  A: { name: '公司经营信号', weight: 0.35 },
-  B: { name: '个人处境信号', weight: 0.30 },
-  C: { name: '行业与赛道', weight: 0.20 },
-  D: { name: '近期异常变化', weight: 0.15 },
+  A: { name: '公司经营信号', weight: 0.25 },
+  B: { name: '个人处境信号', weight: 0.35 },
+  C: { name: '业务与行业信号', weight: 0.15 },
+  D: { name: '正式流程信号', weight: 0.25 },
 };
 
+const SITUATIONS = [
+  { id:'talk', title:'已经被 HR / 领导约谈', desc:'聊到组织调整、岗位变化、协商离职', score:14, signal:'已进入约谈场景' },
+  { id:'personal', title:'最近明显被针对', desc:'项目、权限、绩效或汇报关系突然变了', score:10, signal:'个人处境已变被动' },
+  { id:'company', title:'公司有裁员风声', desc:'停招、降本、合并团队，身边有人离开', score:7, signal:'公司层面已有风向' },
+  { id:'check', title:'只是想提前自查', desc:'暂时没有大事，但想看看安全垫够不够', score:0, signal:'提前体检' },
+];
+
 const QUESTIONS = [
-  { dim:'A', title:'公司最近半年有没有明确裁员、撤部门或悄悄缩编？', signal:'公司已出现裁撤/缩编信号',
-    options:[['没听说，整体稳定',0],['有传闻，但还没落到身边',2],['其他团队已经有人走了',3],['我所在团队已经开始动了',4]] },
-  { dim:'A', title:'公司有没有出现停招、砍福利、降薪或缓发工资？', signal:'预算、薪资或福利出现异常',
-    options:[['都没有',0],['开始停招或控预算',1],['福利、奖金或薪资被动过',3],['已经缓发、欠薪或强制降本',4]] },
-  { dim:'B', title:'你个人最近有没有被点名、PIP、调岗或边缘化？', signal:'个人处境开始变被动',
-    options:[['没有，工作节奏正常',0],['有一点暗示，但还不明确',1],['项目、权限或机会明显变少',3],['已经被约谈、PIP 或要求转岗',4]] },
-  { dim:'C', title:'你所在业务或行业现在是不是在收缩？', signal:'业务或行业正在收缩',
-    options:[['还在增长，机会不少',0],['有点保守，但还能跑',1],['资源明显减少，同行裁员变多',3],['业务传出合并/砍掉，行业大面积收缩',4]] },
-  { dim:'D', title:'最近有没有突然异常：会议不带你、移出群、领导回避？', signal:'近期出现异常动作',
-    options:[['没有异常',0],['有一两件小事',2],['出现好几项，感觉不太对',3],['多项同时发生，而且没人解释',4]] },
+  { dim:'A', level:'中证据', title:'公司层面有没有开始组织调整、停招降本或业务合并？', signal:'公司已出现组织调整/降本信号', proof:'裁员前常见的公司侧前置信号',
+    options:[['没有，招聘和预算正常',0],['只听到传闻，还没影响业务',1],['停招、控预算或福利奖金被动过',3],['已经裁撤团队、合并业务或强制降本',4]] },
+  { dim:'D', level:'高证据', title:'最近 30 天，HR 或领导有没有单独约你谈岗位变化？', signal:'出现单独约谈/岗位变化话术', proof:'正式沟通通常比传闻更接近实际动作',
+    options:[['没有单独谈过',0],['只是普通 1:1，没有异常表述',1],['提到组织调整、岗位变化或“先聊聊”',3],['已经谈到协商离职、补偿或最后工作日',4]] },
+  { dim:'B', level:'高证据', title:'有没有被要求交接工作、整理文档或带接手的人？', signal:'出现交接或替代安排', proof:'交接、接手人和权限迁移，比主观感受更能说明风险',
+    options:[['没有，工作还由我正常推进',0],['只是常规文档沉淀',1],['开始要求我整理关键文档或交接事项',3],['已经有人接手我的项目/客户/权限',4]] },
+  { dim:'B', level:'高证据', title:'绩效沟通有没有突然变正式：书面记录、PIP、不胜任提醒？', signal:'绩效沟通进入正式留痕', proof:'书面绩效和 PIP 往往会影响后续谈判口径',
+    options:[['没有，绩效反馈正常',0],['口头提醒过，但没有留痕',1],['出现书面反馈、改进要求或正式邮件',3],['已经进入 PIP / 不胜任 / 调岗流程',4]] },
+  { dim:'C', level:'中证据', title:'你所在业务或行业最近是不是明显收缩？', signal:'业务或行业正在收缩', proof:'外部机会和内部资源同步变少时，风险会叠加',
+    options:[['还在增长，岗位机会不少',0],['有点保守，但业务还在跑',1],['资源减少，同行裁员或冻结招聘变多',3],['业务被砍/合并，行业大面积收缩',4]] },
 ];
 
 const RESULT_PROFILES = {
@@ -77,6 +84,8 @@ const EVIDENCE_ITEMS = [
 
 let qIndex = 0;
 let qAnswers = [];
+let quizStage = 'situation';
+let selectedSituation = null;
 let battleStep = 0;
 let lastResult = loadLastResult();
 
@@ -94,8 +103,32 @@ function getTopSignals(triggered, limit = 3) {
   return triggered.slice(0, limit);
 }
 
+function getEvidenceSummary(triggered = [], situation = getSituation('check')) {
+  const highCount = triggered.filter(item => item.level === '高证据').length;
+  const mediumCount = triggered.filter(item => item.level === '中证据').length;
+  let confidence = '判断依据弱';
+  let note = '目前更多是基础自查，未出现足够多的明确事件信号。';
+
+  if (highCount >= 2 || (situation.id === 'talk' && highCount >= 1)) {
+    confidence = '判断依据强';
+    note = '你触发了接近裁员流程的高证据事件，建议按约谈前准备处理。';
+  } else if (highCount + mediumCount >= 2 || situation.score >= 10) {
+    confidence = '判断依据中';
+    note = '已经有多个信号叠加，适合先补齐证据和备选方案。';
+  }
+
+  return {
+    confidence,
+    note,
+    highCount,
+    mediumCount,
+    situationTitle: situation.title,
+    situationSignal: situation.signal,
+  };
+}
+
 function getShareCopy(profile) {
-  return `我测出来是${profile.light}：${profile.shareLine} 不是制造焦虑，是提醒自己别空手上谈判桌。测测你的职场降落伞打开了吗？`;
+  return `我测出来是${profile.light}：${profile.shareLine} 这不是算命，是根据裁员前常见事件信号做自查。测测你的职场降落伞打开了吗？`;
 }
 
 function getVaultPriorityIds() {
@@ -108,6 +141,10 @@ function getPriorityActions() {
     { id:'payroll', title:'导出近 12 个月工资流水', desc:'补偿基数别只按基本工资算。' },
     { id:'perf', title:'备份绩效和沟通记录', desc:'反驳“不胜任”和变相逼离职。' },
   ];
+}
+
+function getSituation(id) {
+  return SITUATIONS.find(item => item.id === id) || SITUATIONS[SITUATIONS.length - 1];
 }
 
 function getCompensationNumbers(years, salary) {
@@ -196,10 +233,38 @@ function updateHomeState() {
 
 function initQuiz() {
   qIndex = 0;
+  quizStage = 'situation';
+  selectedSituation = null;
   qAnswers = new Array(QUESTIONS.length).fill(null);
   document.getElementById('quiz-result').classList.add('hidden');
   document.getElementById('quiz-running').classList.remove('hidden');
-  renderQuestion();
+  renderSituationStep();
+}
+
+function renderSituationStep() {
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('progressText').textContent = '先选处境';
+
+  const options = SITUATIONS.map(item => {
+    const selected = selectedSituation && selectedSituation.id === item.id ? ' selected' : '';
+    return `<button class="situation-card${selected}" onclick="selectSituation('${item.id}')">
+      <span>${item.title}</span>
+      <small>${item.desc}</small>
+    </button>`;
+  }).join('');
+
+  document.getElementById('questionContainer').innerHTML = `
+    <article class="question-card">
+      <p class="section-label">先把你的处境放进去</p>
+      <h2>你现在最接近哪种情况？</h2>
+      <p class="question-proof">这一步会影响风险基线，后面 5 题只问已经发生过的具体事件。</p>
+      <div class="situation-options">${options}</div>
+    </article>`;
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.disabled = !selectedSituation;
+  nextBtn.textContent = '进入 5 题';
+  document.getElementById('prevBtn').style.visibility = 'hidden';
 }
 
 function renderQuestion() {
@@ -219,8 +284,9 @@ function renderQuestion() {
 
   document.getElementById('questionContainer').innerHTML = `
     <article class="question-card">
-      <p class="section-label">${DIMENSIONS[q.dim].name}</p>
+      <p class="section-label">${q.level} · ${DIMENSIONS[q.dim].name}</p>
       <h2>${q.title}</h2>
+      <p class="question-proof">${q.proof}</p>
       <div class="options">${options}</div>
     </article>`;
 
@@ -230,12 +296,24 @@ function renderQuestion() {
   document.getElementById('prevBtn').style.visibility = qIndex === 0 ? 'hidden' : 'visible';
 }
 
+function selectSituation(id) {
+  selectedSituation = getSituation(id);
+  renderSituationStep();
+}
+
 function selectOption(index) {
   qAnswers[qIndex] = index;
   renderQuestion();
 }
 
 function nextQuestion() {
+  if (quizStage === 'situation') {
+    if (!selectedSituation) return;
+    quizStage = 'questions';
+    qIndex = 0;
+    renderQuestion();
+    return;
+  }
   if (qAnswers[qIndex] === null) return;
   if (qIndex === QUESTIONS.length - 1) showQuizResult();
   else {
@@ -245,7 +323,12 @@ function nextQuestion() {
 }
 
 function prevQuestion() {
-  if (qIndex === 0) return;
+  if (quizStage === 'situation') return;
+  if (qIndex === 0) {
+    quizStage = 'situation';
+    renderSituationStep();
+    return;
+  }
   qIndex -= 1;
   renderQuestion();
 }
@@ -254,6 +337,7 @@ function calcScore() {
   const dimScore = {};
   const dimMax = {};
   const triggered = [];
+  const situation = selectedSituation || getSituation('check');
   Object.keys(DIMENSIONS).forEach(key => {
     dimScore[key] = 0;
     dimMax[key] = 0;
@@ -266,7 +350,13 @@ function calcScore() {
     dimScore[q.dim] += value;
     dimMax[q.dim] += maxValue;
     if (value >= 3) {
-      triggered.push(`${q.options[answerIndex][0]}｜${q.signal || q.title.replace('？', '')}`);
+      triggered.push({
+        label: q.options[answerIndex][0],
+        signal: q.signal,
+        level: q.level,
+        proof: q.proof,
+        value,
+      });
     }
   });
 
@@ -275,12 +365,13 @@ function calcScore() {
     dimNorm[key] = dimMax[key] > 0 ? (dimScore[key] / dimMax[key]) * 100 : 0;
   });
 
-  let final = 0;
+  let final = situation.score;
   Object.keys(DIMENSIONS).forEach(key => {
     final += dimNorm[key] * DIMENSIONS[key].weight;
   });
 
-  return { final: Math.round(final), dimNorm, triggered };
+  final = Math.min(100, Math.round(final));
+  return { final, dimNorm, triggered, situation, basis: getEvidenceSummary(triggered, situation) };
 }
 
 function showQuizResult() {
@@ -288,10 +379,10 @@ function showQuizResult() {
   document.getElementById('quiz-result').classList.remove('hidden');
   document.getElementById('progressFill').style.width = '100%';
 
-  const { final, dimNorm, triggered } = calcScore();
+  const { final, dimNorm, triggered, situation, basis } = calcScore();
   const profile = getResultProfile(final);
   const topSignals = getTopSignals(triggered, 3);
-  saveLastResult({ final, profile, topSignals, dimNorm });
+  saveLastResult({ final, profile, topSignals, dimNorm, situation, basis });
 
   const report = document.querySelector('.result-report');
   const poster = document.getElementById('sharePoster');
@@ -307,14 +398,48 @@ function showQuizResult() {
   document.getElementById('resultPersona').textContent = profile.persona;
   document.getElementById('resultDesc').textContent = profile.desc;
 
+  renderEvidenceBasis(basis);
   document.getElementById('resultSignals').innerHTML = topSignals.length
-    ? topSignals.map((item, index) => `<div class="signal-row"><span>${index + 1}</span><p>${item}</p></div>`).join('')
+    ? topSignals.map(renderSignalRow).join('')
     : '<div class="signal-row"><span>1</span><p>未触发明显高危信号，继续保持关注即可。</p></div>';
 
   renderPriorityActions();
   renderDimensionBreakdown(dimNorm);
   renderPoster(final, profile);
   document.getElementById('shareStatus').textContent = '结果卡已生成。它不会展示你的具体答案。';
+}
+
+function renderEvidenceBasis(basis) {
+  document.getElementById('resultBasis').innerHTML = `
+    <div class="basis-card is-main">
+      <span>${basis.confidence}</span>
+      <strong>${basis.note}</strong>
+    </div>
+    <div class="basis-card">
+      <span>你的处境</span>
+      <strong>${basis.situationTitle}</strong>
+      <small>${basis.situationSignal}</small>
+    </div>
+    <div class="basis-card">
+      <span>高证据事件</span>
+      <strong>${basis.highCount} 项</strong>
+      <small>约谈、交接、PIP 等具体动作</small>
+    </div>
+    <div class="basis-card">
+      <span>中证据信号</span>
+      <strong>${basis.mediumCount} 项</strong>
+      <small>公司、业务或行业侧变化</small>
+    </div>`;
+}
+
+function renderSignalRow(item, index) {
+  if (typeof item === 'string') {
+    return `<div class="signal-row"><span>${index + 1}</span><p>${item}</p></div>`;
+  }
+  return `<div class="signal-row">
+    <span>${index + 1}</span>
+    <p><strong>${item.signal}</strong><small>${item.label}｜${item.level}</small></p>
+  </div>`;
 }
 
 function renderPriorityActions() {

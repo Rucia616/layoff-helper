@@ -56,7 +56,7 @@ function loadApp() {
     requestAnimationFrame(callback) { callback(); },
   };
   vm.runInNewContext(
-    `${source}\n;globalThis.__APP_TEST__ = { getRiskBand, getResultProfile, getTopSignals, getShareCopy, getCompensationNumbers, QUESTIONS };`,
+    `${source}\n;globalThis.__APP_TEST__ = { getRiskBand, getResultProfile, getTopSignals, getEvidenceSummary, getShareCopy, getCompensationNumbers, QUESTIONS, SITUATIONS };`,
     sandbox,
   );
   return sandbox.__APP_TEST__;
@@ -88,6 +88,29 @@ test('h5 quiz stays lightweight', () => {
   const app = loadApp();
   assert.equal(app.QUESTIONS.length, 5);
   assert.deepEqual(new Set(app.QUESTIONS.map(question => question.dim)), new Set(['A', 'B', 'C', 'D']));
+});
+
+test('quiz uses concrete event signals instead of generic feelings', () => {
+  const app = loadApp();
+  assert.ok(app.SITUATIONS.length >= 4);
+  assert.ok(app.SITUATIONS.some(item => item.id === 'talk' && item.score > 0));
+  assert.ok(app.QUESTIONS.every(question => question.signal && question.proof && question.level));
+  assert.ok(app.QUESTIONS.some(question => /HR|领导|单独约/.test(question.title)));
+  assert.ok(app.QUESTIONS.some(question => /交接|接手/.test(question.title)));
+  assert.ok(app.QUESTIONS.some(question => /PIP|书面/.test(question.title)));
+});
+
+test('evidence summary explains confidence from triggered signals', () => {
+  const app = loadApp();
+  const basis = app.getEvidenceSummary([
+    { level: '高证据' },
+    { level: '高证据' },
+    { level: '中证据' },
+  ], app.SITUATIONS.find(item => item.id === 'talk'));
+  assert.equal(basis.confidence, '判断依据强');
+  assert.equal(basis.highCount, 2);
+  assert.equal(basis.mediumCount, 1);
+  assert.match(basis.note, /高证据/);
 });
 
 test('compensation helper rounds years according to labor compensation rules', () => {
